@@ -120,6 +120,12 @@
   /* Fallback for older browsers */
   --destructive-border: hsl(var(--destructive));
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* --- LEGACY VARIABLES for ScoreboardDisplay --- */
+  --legacy-team1-bg-color: transparent;
+  --legacy-team1-text-color: #FFFFFF;
+  --legacy-team2-bg-color: transparent;
+  --legacy-team2-text-color: #FFFFFF;
 }
 
 .dark {
@@ -238,7 +244,10 @@
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    /* Set body to replicate old design's styles */
+    background-color: gray;
+    color: white;
+    @apply font-sans antialiased;
   }
 }
 
@@ -351,5 +360,52 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
+  }
+}
+
+/* --- LEGACY SCOREBOARD STYLES (TAILWIND IMPLEMENTATION OF s41.css) --- */
+@layer components {
+  /* 2. Team Row Container and Base Styles */
+  .legacy-team-row {
+    /* Fixed Dimensions for the entire row */
+    height: 35px;
+    font-size: 26px;
+    /* Base flex properties */
+    @apply flex items-center w-auto; 
+    font-weight: bold;
+    font-family: Arial, sans-serif; /* Set the old font */
+  }
+  
+  /* 3. Team-Specific Colors */
+  .legacy-team-row.legacy-team-top {
+    background-color: var(--legacy-team1-bg-color);
+    color: var(--legacy-team1-text-color);
+  }
+
+  .legacy-team-row.legacy-team-bottom {
+    background-color: var(--legacy-team2-bg-color);
+    color: var(--legacy-team2-text-color);
+  }
+
+  /* 4. Fixed Widths for Fields (using arbitrary values for exact match) */
+  /* Sets Won (Match Score) - legacy-field-setswon */
+  .legacy-field-setswon {
+    width: 32px; /* Approx 1.25rem * 1.6 from old code */
+  }
+
+  /* Team Name */
+  .legacy-field-name {
+    width: 220px;
+  }
+
+  /* Serving Icon */
+  .legacy-field-serving {
+    width: 35px;
+    background-color: transparent; /* Ensure transparent background */
+  }
+
+  /* Set Score (Main Score) */
+  .legacy-field-setscore {
+    width: 40px;
   }
 }
