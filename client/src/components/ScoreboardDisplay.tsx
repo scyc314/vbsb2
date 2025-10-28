@@ -1,355 +1,198 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+import { type MatchConfig } from "@shared/schema";
+import volleyballIcon from "@assets/stock_images/volleyball_390db037.jpg";
 
-/* LIGHT MODE */
-:root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
-
-  /* Automatic computation of border around primary / danger buttons */
-  --opaque-button-border-intensity: -8; /* In terms of percentages */
-
-  /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
-
-  --background: 210 5% 98%;
-
-  --foreground: 210 6% 12%;
-
-  --border: 210 5% 88%;
-
-  --card: 210 5% 96%;
-
-  --card-foreground: 210 6% 12%;
-
-  --card-border: 210 5% 90%;
-
-  --sidebar: 210 5% 94%;
-
-  --sidebar-foreground: 210 6% 12%;
-
-  --sidebar-border: 210 5% 86%;
-
-  --sidebar-primary: 214 84% 28%;
-
-  --sidebar-primary-foreground: 214 84% 96%;
-
-  --sidebar-accent: 210 8% 88%;
-
-  --sidebar-accent-foreground: 210 8% 18%;
-
-  --sidebar-ring: 214 84% 28%;
-
-  --popover: 210 5% 92%;
-
-  --popover-foreground: 210 6% 12%;
-
-  --popover-border: 210 5% 84%;
-
-  --primary: 214 84% 28%;
-
-  --primary-foreground: 214 84% 96%;
-
-  --secondary: 210 6% 86%;
-
-  --secondary-foreground: 210 6% 16%;
-
-  --muted: 210 8% 90%;
-
-  --muted-foreground: 210 8% 32%;
-
-  --accent: 210 10% 88%;
-
-  --accent-foreground: 210 10% 18%;
-
-  --destructive: 0 72% 28%;
-
-  --destructive-foreground: 0 72% 96%;
-
-  --input: 210 6% 74%;
-  --ring: 214 84% 28%;
-  --chart-1: 214 84% 28%;
-  --chart-2: 197 71% 32%;
-  --chart-3: 173 58% 30%;
-  --chart-4: 43 74% 34%;
-  --chart-5: 27 87% 32%;
-
-  --font-sans: Open Sans, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
-  --radius: .5rem; /* 8px */
-  --shadow-2xs: 0px 2px 0px 0px hsl(210 10% 10% / 0.02);
-  --shadow-xs: 0px 2px 0px 0px hsl(210 10% 10% / 0.04);
-  --shadow-sm: 0px 2px 0px 0px hsl(210 10% 10% / 0.04), 0px 1px 2px -1px hsl(210 10% 10% / 0.06);
-  --shadow: 0px 2px 0px 0px hsl(210 10% 10% / 0.04), 0px 1px 2px -1px hsl(210 10% 10% / 0.08);
-  --shadow-md: 0px 2px 0px 0px hsl(210 10% 10% / 0.06), 0px 2px 4px -1px hsl(210 10% 10% / 0.10);
-  --shadow-lg: 0px 2px 0px 0px hsl(210 10% 10% / 0.08), 0px 4px 6px -1px hsl(210 10% 10% / 0.12);
-  --shadow-xl: 0px 2px 0px 0px hsl(210 10% 10% / 0.10), 0px 8px 10px -1px hsl(210 10% 10% / 0.14);
-  --shadow-2xl: 0px 2px 0px 0px hsl(210 10% 10% / 0.16);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
-
-  /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
-
-  /* Fallback for older browsers */
-  --sidebar-primary-border: hsl(var(--sidebar-primary));
-  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --sidebar-accent-border: hsl(var(--sidebar-accent));
-  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --primary-border: hsl(var(--primary));
-  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --secondary-border: hsl(var(--secondary));
-  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --muted-border: hsl(var(--muted));
-  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --accent-border: hsl(var(--accent));
-  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --destructive-border: hsl(var(--destructive));
-  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+interface ScoreboardDisplayProps {
+  config: MatchConfig;
 }
 
-.dark {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
+export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
+  const { layout, fontFamily, fontSize, team1, team2 } = config;
 
-  --opaque-button-border-intensity: 9;  /* In terms of percentages */
-
-  /* Backgrounds applied on top of other backgrounds when hovered/active */
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
-
-  --background: 210 6% 8%;
-
-  --foreground: 210 6% 92%;
-
-  --border: 210 6% 18%;
-
-  --card: 210 6% 10%;
-
-  --card-foreground: 210 6% 92%;
-
-  --card-border: 210 6% 16%;
-
-  --sidebar: 210 6% 12%;
-
-  --sidebar-foreground: 210 6% 92%;
-
-  --sidebar-border: 210 6% 20%;
-
-  --sidebar-primary: 214 84% 28%;
-
-  --sidebar-primary-foreground: 214 84% 96%;
-
-  --sidebar-accent: 210 8% 16%;
-
-  --sidebar-accent-foreground: 210 8% 86%;
-
-  --sidebar-ring: 214 84% 28%;
-
-  --popover: 210 6% 14%;
-
-  --popover-foreground: 210 6% 92%;
-
-  --popover-border: 210 6% 22%;
-
-  --primary: 214 84% 28%;
-
-  --primary-foreground: 214 84% 96%;
-
-  --secondary: 210 6% 18%;
-
-  --secondary-foreground: 210 6% 88%;
-
-  --muted: 210 8% 16%;
-
-  --muted-foreground: 210 8% 72%;
-
-  --accent: 210 10% 16%;
-
-  --accent-foreground: 210 10% 86%;
-
-  --destructive: 0 72% 28%;
-
-  --destructive-foreground: 0 72% 96%;
-
-  --input: 210 6% 32%;
-  --ring: 214 84% 28%;
-  --chart-1: 214 84% 68%;
-  --chart-2: 197 71% 68%;
-  --chart-3: 173 58% 66%;
-  --chart-4: 43 74% 68%;
-  --chart-5: 27 87% 66%;
-
-  --shadow-2xs: 0px 2px 0px 0px hsl(210 10% 0% / 0.10);
-  --shadow-xs: 0px 2px 0px 0px hsl(210 10% 0% / 0.12);
-  --shadow-sm: 0px 2px 0px 0px hsl(210 10% 0% / 0.14), 0px 1px 2px -1px hsl(210 10% 0% / 0.16);
-  --shadow: 0px 2px 0px 0px hsl(210 10% 0% / 0.16), 0px 1px 2px -1px hsl(210 10% 0% / 0.18);
-  --shadow-md: 0px 2px 0px 0px hsl(210 10% 0% / 0.18), 0px 2px 4px -1px hsl(210 10% 0% / 0.20);
-  --shadow-lg: 0px 2px 0px 0px hsl(210 10% 0% / 0.20), 0px 4px 6px -1px hsl(210 10% 0% / 0.22);
-  --shadow-xl: 0px 2px 0px 0px hsl(210 10% 0% / 0.22), 0px 8px 10px -1px hsl(210 10% 0% / 0.24);
-  --shadow-2xl: 0px 2px 0px 0px hsl(210 10% 0% / 0.26);
-
-  /* Fallback for older browsers */
-  --sidebar-primary-border: hsl(var(--sidebar-primary));
-  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --sidebar-accent-border: hsl(var(--sidebar-accent));
-  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --primary-border: hsl(var(--primary));
-  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --secondary-border: hsl(var(--secondary));
-  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --muted-border: hsl(var(--muted));
-  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --accent-border: hsl(var(--accent));
-  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-
-  /* Fallback for older browsers */
-  --destructive-border: hsl(var(--destructive));
-  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
-}
-
-@layer base {
-  * {
-    @apply border-border;
+  // --- REUSABLE TEAM SECTION (Used for sideBySide logic) ---
+  const TeamSection = ({
+    team,
+    position,
+  }: {
+    team: typeof team1;
+    position: "left" | "right" | "top" | "bottom";
+  }) => (
+    <div
+      className="flex-1 p-6 rounded-lg flex flex-col justify-center items-center relative"
+      style={{
+        backgroundColor: team.bgColor,
+        color: team.textColor,
+        fontFamily: fontFamily,
+      }}
+      data-testid={`team-${position}-section`}
+    >
+      <div className="flex items-center gap-3 text-2xl font-bold mb-4">
+        {team.serving && (
+          <img
+            src={volleyballIcon}
+            alt="Serving"
+            className="h-8 w-8 rounded-full object-cover"
+            data-testid={`serving-indicator-${position}`}
+          />
+        )}
+        <span data-testid={`team-name-${position}`}>{team.name}</span>
+      </div>
+      <div className="flex items-center gap-8">
+        <div className="text-center">
+          <div className="text-xs uppercase tracking-wide opacity-75 mb-1">Set</div>
+          <div
+            className="font-black"
+            style={{ fontSize: `${fontSize}px` }}
+            data-testid={`set-score-${position}`}
+          >
+            {team.setScore}
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="text-xs uppercase tracking-wide opacity-75 mb-1">Match</div>
+          <div
+            className="font-black"
+            style={{ fontSize: `${fontSize * 0.75}px` }}
+            data-testid={`match-score-${position}`}
+          >
+            {team.matchScore}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+  
+  // --- LAYOUT: SIDE BY SIDE (Original Logic) ---
+  if (layout === "sideBySide") {
+    return (
+      <div className="h-screen w-screen bg-transparent p-4" data-testid="scoreboard-display">
+        <div className="flex gap-4 h-full">
+          <TeamSection team={team1} position="left" />
+          <TeamSection team={team2} position="right" />
+        </div>
+      </div>
+    );
   }
 
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
-  }
-}
+  // --- LAYOUT: LEGACY STACKED (NEW Implementation) ---
+  if (layout === "stacked") {
+    const { team1, team2 } = config;
+    
+    // Set colors as CSS variables for use in custom CSS rules
+    document.documentElement.style.setProperty('--legacy-team1-bg-color', team1.bgColor);
+    document.documentElement.style.setProperty('--legacy-team1-text-color', team1.textColor);
+    document.documentElement.style.setProperty('--legacy-team2-bg-color', team2.bgColor);
+    document.documentElement.style.setProperty('--legacy-team2-text-color', team2.textColor);
+    document.documentElement.style.setProperty('--legacy-font-family', fontFamily);
+    
+    // Custom Team Row Component for the Legacy Stacked Look
+    const LegacyTeamRow = ({ team, position }: { team: typeof team1, position: 'top' | 'bottom' }) => (
+      <div 
+        className={`legacy-team-row legacy-team-${position} ${team.serving ? 'serving' : ''}`}
+        data-testid={`team-${position}-section`}
+        // Apply dynamic colors via style to use them in Tailwind classes
+        style={{ color: team.textColor, fontFamily }}
+      >
+          {/* 1. Sets Won (Match Score) - Fixed Width, Gray Bg */}
+          <span 
+            className="legacy-field-setswon flex-shrink-0 text-[18px] text-center bg-gray-700/80 leading-[35px] align-middle"
+            data-testid={`match-score-${position}`}
+          >
+            {team.matchScore}
+          </span>
+          
+          {/* 2. Team Name - Fixed Width, Padded */}
+          <span 
+            className="legacy-field-name flex-shrink-0 pl-[5px]"
+            data-testid={`team-name-${position}`}
+          >
+            {team.name}
+          </span>
+          
+          {/* 3. Serving Icon - Fixed Width, Centered */}
+          <span className="legacy-field-serving flex-shrink-0 flex justify-center items-center">
+            {team.serving ? 
+              <img src={volleyballIcon} alt="Serving" className="h-full w-auto max-h-full max-w-full" /> 
+              : 
+              <span className="w-full">&nbsp;</span>
+            }
+          </span>
+          
+          {/* 4. Set Score (Main Score) - Fixed Width, Centered */}
+          <span 
+            className="legacy-field-setscore flex-shrink-0 text-center"
+            data-testid={`set-score-${position}`}
+          >
+            {team.setScore}
+          </span>
+      </div>
+    );
 
-/**
- * Using the elevate system.
- * Automatic contrast adjustment.
- *
- * <element className="hover-elevate" />
- * <element className="active-elevate-2" />
- *
- * // Using the tailwind utility when a data attribute is "on"
- * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
- * // Or manually controlling the toggle state
- * <element className="toggle-elevate toggle-elevated" />
- *
- * Elevation systems have to handle many states.
- * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
- * - toggled or not
- * - focused or not (this is not handled with these utilities)
- *
- * Even without handling focused or not, this is six possible combinations that
- * need to be distinguished from eachother visually.
- */
-@layer utilities {
-
-  /* Hide ugly search cancel button in Chrome until we can style it properly */
-  input[type="search"]::-webkit-search-cancel-button {
-    @apply hidden;
-  }
-
-  /* Placeholder styling for contentEditable div */
-  [contenteditable][data-placeholder]:empty::before {
-    content: attr(data-placeholder);
-    color: hsl(var(--muted-foreground));
-    pointer-events: none;
-  }
-
-  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
-   * buttons/badges can remove the automatic brightness adjustment on interactions
-   * and program their own. */
-  .no-default-hover-elevate {}
-
-  .no-default-active-elevate {}
-
-
-  /**
-   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
-   * This way they can stack/compound. Both will overlap the parent's borders!
-   * So borders will be automatically adjusted both on toggle, and hover/active,
-   * and they will be compounded.
-   */
-  .toggle-elevate::before,
-  .toggle-elevate-2::before {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    inset: 0px;
-    /*border-radius: inherit;   match rounded corners */
-    border-radius: inherit;
-    z-index: -1;
-    /* sits behind content but above backdrop */
-  }
-
-  .toggle-elevate.toggle-elevated::before {
-    background-color: var(--elevate-2);
+    return (
+      <div data-testid="scoreboard-display">
+        <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
+          <LegacyTeamRow team={team1} position="top" />
+          <LegacyTeamRow team={team2} position="bottom" />
+        </div>
+      </div>
+    );
   }
 
-  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
-  .border.toggle-elevate::before {
-    inset: -1px;
-  }
-
-  /* Does not work on elements with overflow:hidden! */
-  .hover-elevate:not(.no-default-hover-elevate),
-  .active-elevate:not(.no-default-active-elevate),
-  .hover-elevate-2:not(.no-default-hover-elevate),
-  .active-elevate-2:not(.no-default-active-elevate) {
-    position: relative;
-    z-index: 0;
-  }
-
-  .hover-elevate:not(.no-default-hover-elevate)::after,
-  .active-elevate:not(.no-default-active-elevate)::after,
-  .hover-elevate-2:not(.no-default-hover-elevate)::after,
-  .active-elevate-2:not(.no-default-active-elevate)::after {
-    content: "";
-    pointer-events: none;
-    position: absolute;
-    inset: 0px;
-    /*border-radius: inherit;   match rounded corners */
-    border-radius: inherit;
-    z-index: 999;
-    /* sits in front of content */
-  }
-
-  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
-  .active-elevate:active:not(.no-default-active-elevate)::after {
-    background-color: var(--elevate-1);
-  }
-
-  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
-  .active-elevate-2:active:not(.no-default-active-elevate)::after {
-    background-color: var(--elevate-2);
-  }
-
-  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
-  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
-  .border.active-elevate:not(.no-active-interaction-elevate)::after,
-  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
-  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
-  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
-    inset: -1px;
-  }
+  // --- LAYOUT: SCOREBOARD (Original Logic) ---
+  // Scoreboard layout - large numbers on colored backgrounds
+  return (
+    <div className="h-screen w-screen bg-black flex" data-testid="scoreboard-display">
+      <div
+        className="flex-1 flex flex-col items-center justify-center relative"
+        style={{ backgroundColor: team1.bgColor, color: team1.textColor }}
+      >
+        {team1.serving && (
+          <img
+            src={volleyballIcon}
+            alt="Serving"
+            className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
+            data-testid="serving-indicator-left"
+          />
+        )}
+        <div className="text-4xl font-bold mb-4" data-testid="team-name-left">
+          {team1.name}
+        </div>
+        <div
+          className="font-black"
+          style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
+          data-testid="set-score-left"
+        >
+          {team1.setScore}
+        </div>
+        <div className="text-2xl mt-4 opacity-75">
+          Sets: <span data-testid="match-score-left">{team1.matchScore}</span>
+        </div>
+      </div>
+      <div
+        className="flex-1 flex flex-col items-center justify-center relative"
+        style={{ backgroundColor: team2.bgColor, color: team2.textColor }}
+      >
+        {team2.serving && (
+          <img
+            src={volleyballIcon}
+            alt="Serving"
+            className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
+            data-testid="serving-indicator-right"
+          />
+        )}
+        <div className="text-4xl font-bold mb-4" data-testid="team-name-right">
+          {team2.name}
+        </div>
+        <div
+          className="font-black"
+          style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
+          data-testid="set-score-right"
+        >
+          {team2.setScore}
+        </div>
+        <div className="text-2xl mt-4 opacity-75">
+          Sets: <span data-testid="match-score-right">{team2.matchScore}</span>
+        </div>
+      </div>
+    </div>
+  );
 }
