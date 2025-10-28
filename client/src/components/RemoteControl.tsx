@@ -19,7 +19,7 @@ interface TeamControlsProps {
 }
 
 // NOTE: This component is defined *outside* the main component to isolate its render cycle
-const TeamControls = ({
+const TeamControlsInternal = ({ // Internal name changed to avoid conflict with the file export
     config,
     teamNumber,
     onUpdate,
@@ -35,9 +35,11 @@ const TeamControls = ({
 
     // 2. Sync local state when the config (from WebSocket) changes
     useEffect(() => {
-        setLocalName(team.name);
-        setLocalBg(team.bgColor);
-        setLocalText(team.textColor);
+        // Only update local state if the incoming server value is different from the current local value
+        if (team.name !== localName) setLocalName(team.name);
+        if (team.bgColor !== localBg) setLocalBg(team.bgColor);
+        if (team.textColor !== localText) setLocalText(team.textColor);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [team.name, team.bgColor, team.textColor]);
 
 
@@ -223,8 +225,8 @@ const TeamControls = ({
 // --- END EXTRACTED/REWRITTEN TEAM CONTROLS COMPONENT ---
 
 
-// --- REMOTE CONTROL MAIN COMPONENT ---
-export default function RemoteControlMain({ // Renamed to avoid confusion with the component above
+// --- REMOTE CONTROL MAIN COMPONENT (Correctly exported) ---
+export default function RemoteControl({
   initialConfig,
   onConfigChange,
   connectionStatus = "connected",
@@ -257,12 +259,12 @@ export default function RemoteControlMain({ // Renamed to avoid confusion with t
 
                 {/* Team Controls Side by Side */}
                 <div className="flex gap-2">
-                    <TeamControls 
+                    <TeamControlsInternal 
                         config={config} 
                         teamNumber={1} 
                         onUpdate={handleUpdateFromControls}
                     />
-                    <TeamControls 
+                    <TeamControlsInternal 
                         config={config} 
                         teamNumber={2} 
                         onUpdate={handleUpdateFromControls}
@@ -272,6 +274,3 @@ export default function RemoteControlMain({ // Renamed to avoid confusion with t
         </div>
     );
 }
-
-// Rename the default export to use the new component name
-export { RemoteControlMain as default };
