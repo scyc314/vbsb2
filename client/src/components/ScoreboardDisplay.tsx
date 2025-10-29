@@ -5,10 +5,9 @@ interface ScoreboardDisplayProps {
   config: MatchConfig;
 }
 
-// Fixed dimensions for the high-resolution output (e.g., 1920x1080)
-// The browser will render this huge element and then downscale it to fit the window.
-const BOARD_WIDTH = 1920; 
-const BOARD_HEIGHT = 1080;
+// Fixed target resolution for the scoreboard content
+const TARGET_WIDTH = 3840; // Force content to render at 4K width
+const TARGET_HEIGHT = 2160; // Force content to render at 4K height
 
 export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   const { layout, fontFamily, fontSize, team1, team2 } = config;
@@ -23,11 +22,11 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   }) => (
     <div
       className="flex-1 p-6 rounded-lg flex flex-col justify-center items-center relative"
-      // Use the default Inter font for all Tailwind-based layouts for consistency
+      // Explicit font stack for reliability
       style={{
         backgroundColor: team.bgColor,
         color: team.textColor,
-        fontFamily: 'Inter, Arial, sans-serif', // Explicit font stack
+        fontFamily: 'Inter, Arial, sans-serif',
       }}
       data-testid={`team-${position}-section`}
     >
@@ -67,22 +66,29 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     </div>
   );
   
+  // --- LAYOUT: CORE RENDERING WRAPPER (Used for scoreboard and sideBySide) ---
+  // The content is rendered at a huge fixed resolution and scaled down by the browser
+  const CoreWrapper = ({ children }: { children: React.ReactNode }) => (
+      <div 
+          style={{ width: TARGET_WIDTH, height: TARGET_HEIGHT }} 
+          className="forced-resolution-wrapper" 
+          data-testid="scoreboard-display-wrapper"
+      >
+          {children}
+      </div>
+  )
+
   // --- LAYOUT: SIDE BY SIDE (FIXED RESOLUTION) ---
   if (layout === "sideBySide") {
-    // Apply FIXED resolution to the outer container
     return (
-      <div 
-        style={{ width: BOARD_WIDTH, height: BOARD_HEIGHT }} 
-        className="fixed-resolution-wrapper" 
-        data-testid="scoreboard-display-wrapper"
-      >
+      <CoreWrapper>
         <div className="h-full w-full bg-transparent p-4" data-testid="scoreboard-display">
           <div className="flex gap-4 h-full">
             <TeamSection team={team1} position="left" />
             <TeamSection team={team2} position="right" />
           </div>
         </div>
-      </div>
+      </CoreWrapper>
     );
   }
 
@@ -90,18 +96,16 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   if (layout === "stacked") {
     const { team1, team2 } = config;
     
-    // Legacy styling relies on fixed pixel sizes
     document.documentElement.style.setProperty('--legacy-team1-bg-color', team1.bgColor);
     document.documentElement.style.setProperty('--legacy-team1-text-color', team1.textColor);
     document.documentElement.style.setProperty('--legacy-team2-bg-color', team2.bgColor);
     document.documentElement.style.setProperty('--legacy-team2-text-color', team2.textColor);
     
-    // NOTE: This layout uses a fixed font (Arial/sans-serif) defined in CSS
     const LegacyTeamRow = ({ team, position }: { team: typeof team1, position: 'top' | 'bottom' }) => (
       <div 
         className={`legacy-team-row legacy-team-${position} ${team.serving ? 'serving' : ''}`}
         data-testid={`team-${position}-section`}
-        style={{ color: team.textColor }} // Font will be set by CSS to Arial
+        style={{ color: team.textColor }} // Font is Arial/sans-serif from CSS
       >
           <span 
             className="legacy-field-setswon flex-shrink-0 text-[18px] text-center bg-gray-700/80 leading-[35px] align-middle"
@@ -135,26 +139,21 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     );
 
     return (
-      <div 
-        style={{ width: BOARD_WIDTH, height: BOARD_HEIGHT }} 
-        className="fixed-resolution-wrapper" 
-        data-testid="scoreboard-display-wrapper"
-      >
-        <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
-          <LegacyTeamRow team={team1} position="top" />
-          <LegacyTeamRow team={team2} position="bottom" />
+      <CoreWrapper>
+        {/* The legacy stack layout must be positioned within the 4K container */}
+        <div className="absolute top-0 left-0" style={{ transform: 'scale(3.5)'}}> {/* Manual factor to make it visible */}
+          <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
+            <LegacyTeamRow team={team1} position="top" />
+            <LegacyTeamRow team={team2} position="bottom" />
+          </div>
         </div>
-      </div>
+      </CoreWrapper>
     );
   }
 
   // --- LAYOUT: SCOREBOARD (FIXED RESOLUTION) ---
   return (
-    <div 
-      style={{ width: BOARD_WIDTH, height: BOARD_HEIGHT }} 
-      className="fixed-resolution-wrapper" 
-      data-testid="scoreboard-display-wrapper"
-    >
+    <CoreWrapper>
       <div className="h-full w-full bg-black flex" data-testid="scoreboard-display">
         <div
           className="flex-1 flex flex-col items-center justify-center relative"
@@ -209,6 +208,6 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
           </div>
         </div>
       </div>
-    </div>
+    </CoreWrapper>
   );
 }
