@@ -12,17 +12,17 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 0 0% 0%; /* CHANGE: Main background to Black */
+  --background: 210 5% 98%; 
 
-  --foreground: 210 6% 92%; /* CHANGE: Text to White/Light Gray */
+  --foreground: 210 6% 12%; 
 
-  --border: 210 5% 30%; /* CHANGE: Border to a visible gray */
+  --border: 210 5% 88%; 
 
-  --card: 210 6% 15%; /* CHANGE: Inner card background to Dark Gray */
+  --card: 210 5% 96%; 
 
-  --card-foreground: 210 6% 92%;
+  --card-foreground: 210 6% 12%;
 
-  --card-border: 210 5% 30%;
+  --card-border: 210 5% 90%;
 
   --sidebar: 210 5% 94%;
 
@@ -50,23 +50,23 @@
 
   --primary-foreground: 214 84% 96%;
 
-  --secondary: 210 6% 35%; /* CHANGE: Secondary button to a Medium Gray */
+  --secondary: 210 6% 86%; 
 
-  --secondary-foreground: 210 6% 92%;
+  --secondary-foreground: 210 6% 16%;
 
   --muted: 210 8% 90%;
 
-  --muted-foreground: 210 8% 72%;
+  --muted-foreground: 210 8% 32%;
 
   --accent: 210 10% 88%;
 
-  --accent-foreground: 210 10% 86%;
+  --accent-foreground: 210 10% 18%;
 
   --destructive: 0 72% 28%;
 
   --destructive-foreground: 0 72% 96%;
 
-  --input: 210 6% 40%; /* CHANGE: Input background to a darker color */
+  --input: 210 6% 74%;
   --ring: 214 84% 28%;
   --chart-1: 214 84% 28%;
   --chart-2: 197 71% 32%;
@@ -125,7 +125,6 @@
 }
 
 .dark {
-  /* No changes required in dark mode for this request */
   --button-outline: rgba(255,255,255, .10);
   --badge-outline: rgba(255,255,255, .05);
 
@@ -240,8 +239,8 @@
   }
 
   body {
-    background-color: var(--background); /* Use CSS variable for consistency */
-    color: var(--foreground); /* Use CSS variable for consistency */
+    background-color: var(--background); 
+    color: var(--foreground); 
     @apply font-sans antialiased;
   }
 }
@@ -342,6 +341,30 @@
   }
 }
 
+/* --- SCALING CONTAINER FOR HIGH-RESOLUTION SCOREBOARDS --- */
+@layer components {
+  /* This container forces the content to a massive size and scales it down, 
+     making the text/graphics much sharper when viewed by a camera/external source */
+  .scaling-container {
+    /* Use a high-resolution base for scaling, e.g., 4K/UHD (3840x2160) */
+    width: 3840px; 
+    height: 2160px;
+    
+    /* Scale the content down to fit the actual viewport */
+    transform-origin: top left;
+    transform: scale(calc(100vw / 3840), calc(100vh / 2160));
+    
+    /* Ensure no scrollbars show up */
+    overflow: hidden; 
+    
+    /* Position fixed to cover the whole viewport (optional, but clean) */
+    position: fixed; 
+    top: 0; 
+    left: 0;
+  }
+}
+
+
 /* --- LEGACY SCOREBOARD STYLES (TAILWIND IMPLEMENTATION OF s41.css) --- */
 @layer components {
   /* 2. Team Row Container and Base Styles */
@@ -387,4 +410,4 @@
   .legacy-field-setscore {
     width: 40px;
   }
-}
+}```
