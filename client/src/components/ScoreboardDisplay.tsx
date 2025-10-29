@@ -81,14 +81,14 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   // --- LAYOUT: SIDE BY SIDE (FIXED RESOLUTION) ---
   if (layout === "sideBySide") {
     return (
-      <CoreWrapper>
-        <div className="h-full w-full bg-transparent p-4" data-testid="scoreboard-display">
-          <div className="flex gap-4 h-full">
-            <TeamSection team={team1} position="left" />
-            <TeamSection team={team2} position="right" />
+      <div style={{ paddingTop: '96px', paddingLeft: '384px' }}> {/* pt-24 (96px) and pl-96 (384px) applied directly */}
+        <CoreWrapper>
+          <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
+            <LegacyTeamRow team={team1} position="top" />
+            <LegacyTeamRow team={team2} position="bottom" />
           </div>
-        </div>
-      </CoreWrapper>
+        </CoreWrapper>
+      </div>
     );
   }
 
