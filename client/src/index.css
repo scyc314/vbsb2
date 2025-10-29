@@ -318,12 +318,12 @@
   }
 
   .hover-elevate:hover:not(.no-default-hover-elevate)::after,
-  .active-elevate:active:not(.no-default-active-elevate)::after {
+  .active-elevate:active:not(.no-default-hover-elevate)::after {
     background-color: var(--elevate-1);
   }
 
   .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
-  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+  .active-elevate-2:active:not(.no-default-hover-elevate)::after {
     background-color: var(--elevate-2);
   }
 
@@ -341,11 +341,16 @@
 @layer components {
   
   /* The wrapper that forces the browser to render the content at a huge fixed resolution */
+  /* This relies on the browser's superior downscaling ability */
   .fixed-resolution-wrapper {
     /* Scale the content down to fit the actual viewport */
     transform-origin: top left;
     transform: scale(calc(100vw / 1920), calc(100vh / 1080)); 
     
+    /* Set an absolute size on the element so its children render HUGE (1920x1080) */
+    width: 1920px;
+    height: 1080px;
+
     /* Ensure no scrollbars show up */
     @apply fixed top-0 left-0 overflow-hidden;
   }
