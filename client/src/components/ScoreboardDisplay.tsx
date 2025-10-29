@@ -5,7 +5,9 @@ interface ScoreboardDisplayProps {
   config: MatchConfig;
 }
 
-// Remove TARGET_WIDTH and TARGET_HEIGHT constants
+// Fixed target resolution for the scoreboard content
+const TARGET_WIDTH = 1920; // Use a common HD target resolution
+const TARGET_HEIGHT = 1080; 
 
 export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   const { layout, fontFamily, fontSize, team1, team2 } = config;
@@ -64,19 +66,35 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     </div>
   );
   
-  // --- LAYOUT: SIDE BY SIDE (Original logic - no scaling wrapper) ---
+  // --- LAYOUT: CORE RENDERING WRAPPER ---
+  // The content is rendered at a huge fixed resolution and scaled down by the browser
+  const CoreWrapper = ({ children }: { children: React.ReactNode }) => (
+      <div 
+          style={{ width: TARGET_WIDTH, height: TARGET_HEIGHT }} 
+          className="forced-resolution-wrapper" 
+          data-testid="scoreboard-display-wrapper"
+      >
+          {children}
+      </div>
+  )
+
+  // --- LAYOUT: SIDE BY SIDE (FIXED RESOLUTION) ---
   if (layout === "sideBySide") {
     return (
-      <div className="h-screen w-screen bg-transparent p-4" data-testid="scoreboard-display">
-        <div className="flex gap-4 h-full">
-          <TeamSection team={team1} position="left" />
-          <TeamSection team={team2} position="right" />
-        </div>
+      <div className="pt-24 pl-24"> {/* Apply simple padding BEFORE scaling */}
+        <CoreWrapper>
+          <div className="h-full w-full bg-transparent p-4" data-testid="scoreboard-display">
+            <div className="flex gap-4 h-full">
+              <TeamSection team={team1} position="left" />
+              <TeamSection team={team2} position="right" />
+            </div>
+          </div>
+        </CoreWrapper>
       </div>
     );
   }
 
-  // --- LAYOUT: LEGACY STACKED (Padding fix only) ---
+  // --- LAYOUT: LEGACY STACKED (FIXED RESOLUTION) ---
   if (layout === "stacked") {
     const { team1, team2 } = config;
     
@@ -85,7 +103,6 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     document.documentElement.style.setProperty('--legacy-team2-bg-color', team2.bgColor);
     document.documentElement.style.setProperty('--legacy-team2-text-color', team2.textColor);
     
-    // LegacyTeamRow definition (kept here to keep scope correct)
     const LegacyTeamRow = ({ team, position }: { team: typeof team1, position: 'top' | 'bottom' }) => (
       <div 
         className={`legacy-team-row legacy-team-${position} ${team.serving ? 'serving' : ''}`}
@@ -123,72 +140,75 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
       </div>
     );
 
-    // FIX: Use pt- and pl- with standard Tailwind classes for padding
     return (
-      <div className="pt-24 pl-24"> 
-        <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
-          <LegacyTeamRow team={team1} position="top" />
-          <LegacyTeamRow team={team2} position="bottom" />
-        </div>
+      <div className="pt-24 pl-96"> {/* Apply large padding BEFORE scaling */}
+        <CoreWrapper>
+          <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
+            <LegacyTeamRow team={team1} position="top" />
+            <LegacyTeamRow team={team2} position="bottom" />
+          </div>
+        </CoreWrapper>
       </div>
     );
   }
 
-  // --- LAYOUT: SCOREBOARD (Original logic - no scaling wrapper) ---
+  // --- LAYOUT: SCOREBOARD (FIXED RESOLUTION) ---
   return (
-    <div className="h-screen w-screen bg-black flex" data-testid="scoreboard-display">
-      <div
-        className="flex-1 flex flex-col items-center justify-center relative"
-        style={{ backgroundColor: team1.bgColor, color: team1.textColor, fontFamily: 'Inter, Arial, sans-serif' }}
-      >
-        {team1.serving && (
-          <img
-            src={volleyballIcon}
-            alt="Serving"
-            className="h-12 w-12 rounded-full object-cover absolute top-8 right-8"
-            data-testid="serving-indicator-left"
-          />
-        )}
-        <div className="text-4xl font-bold mb-4" data-testid="team-name-left">
-          {team1.name}
+    <CoreWrapper>
+      <div className="h-full w-full bg-black flex" data-testid="scoreboard-display">
+        <div
+          className="flex-1 flex flex-col items-center justify-center relative"
+          style={{ backgroundColor: team1.bgColor, color: team1.textColor, fontFamily: 'Inter, Arial, sans-serif' }}
+        >
+          {team1.serving && (
+            <img
+              src={volleyballIcon}
+              alt="Serving"
+              className="h-12 w-12 rounded-full object-cover absolute top-8 right-8"
+              data-testid="serving-indicator-left"
+            />
+          )}
+          <div className="text-4xl font-bold mb-4" data-testid="team-name-left">
+            {team1.name}
+          </div>
+          <div
+            className="font-black"
+            style={{ fontSize: `${fontSize * 2}px` }}
+            data-testid="set-score-left"
+          >
+            {team1.setScore}
+          </div>
+          <div className="text-2xl mt-4 opacity-75">
+            Sets: <span data-testid="match-score-left">{team1.matchScore}</span>
+          </div>
         </div>
         <div
-          className="font-black"
-          style={{ fontSize: `${fontSize * 2}px` }}
-          data-testid="set-score-left"
+          className="flex-1 flex flex-col items-center justify-center relative"
+          style={{ backgroundColor: team2.bgColor, color: team2.textColor, fontFamily: 'Inter, Arial, sans-serif' }}
         >
-          {team1.setScore}
-        </div>
-        <div className="text-2xl mt-4 opacity-75">
-          Sets: <span data-testid="match-score-left">{team1.matchScore}</span>
+          {team2.serving && (
+            <img
+              src={volleyballIcon}
+              alt="Serving"
+              className="h-12 w-12 rounded-full object-cover absolute top-8 right-8"
+              data-testid="serving-indicator-right"
+            />
+          )}
+          <div className="text-4xl font-bold mb-4" data-testid="team-name-right">
+            {team2.name}
+          </div>
+          <div
+            className="font-black"
+            style={{ fontSize: `${fontSize * 2}px` }}
+            data-testid="set-score-right"
+          >
+            {team2.setScore}
+          </div>
+          <div className="text-2xl mt-4 opacity-75">
+            Sets: <span data-testid="match-score-right">{team2.matchScore}</span>
+          </div>
         </div>
       </div>
-      <div
-        className="flex-1 flex flex-col items-center justify-center relative"
-        style={{ backgroundColor: team2.bgColor, color: team2.textColor, fontFamily: 'Inter, Arial, sans-serif' }}
-      >
-        {team2.serving && (
-          <img
-            src={volleyballIcon}
-            alt="Serving"
-            className="h-12 w-12 rounded-full object-cover absolute top-8 right-8"
-            data-testid="serving-indicator-right"
-          />
-        )}
-        <div className="text-4xl font-bold mb-4" data-testid="team-name-right">
-          {team2.name}
-        </div>
-        <div
-          className="font-black"
-          style={{ fontSize: `${fontSize * 2}px` }}
-          data-testid="set-score-right"
-        >
-          {team2.setScore}
-        </div>
-        <div className="text-2xl mt-4 opacity-75">
-          Sets: <span data-testid="match-score-right">{team2.matchScore}</span>
-        </div>
-      </div>
-    </div>
+    </CoreWrapper>
   );
 }
