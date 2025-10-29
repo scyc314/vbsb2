@@ -101,11 +101,12 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     document.documentElement.style.setProperty('--legacy-team2-bg-color', team2.bgColor);
     document.documentElement.style.setProperty('--legacy-team2-text-color', team2.textColor);
     
+    // Define the LegacyTeamRow component *within* the scope where it is used
     const LegacyTeamRow = ({ team, position }: { team: typeof team1, position: 'top' | 'bottom' }) => (
       <div 
         className={`legacy-team-row legacy-team-${position} ${team.serving ? 'serving' : ''}`}
         data-testid={`team-${position}-section`}
-        style={{ color: team.textColor }} // Font is Arial/sans-serif from CSS
+        style={{ color: team.textColor }}
       >
           <span 
             className="legacy-field-setswon flex-shrink-0 text-[18px] text-center bg-gray-700/80 leading-[35px] align-middle"
@@ -113,14 +114,12 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
           >
             {team.matchScore}
           </span>
-          
           <span 
             className="legacy-field-name flex-shrink-0 pl-[5px]"
             data-testid={`team-name-${position}`}
           >
             {team.name}
           </span>
-          
           <span className="legacy-field-serving flex-shrink-0 flex justify-center items-center">
             {team.serving ? 
               <img src={volleyballIcon} alt="Serving" className="h-full w-auto max-h-full max-w-full" /> 
@@ -128,7 +127,6 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
               <span className="w-full">&nbsp;</span>
             }
           </span>
-          
           <span 
             className="legacy-field-setscore flex-shrink-0 text-center"
             data-testid={`set-score-${position}`}
@@ -139,7 +137,8 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     );
 
     return (
-      <div className="pt-24 pl-96"> {/* ADD PADDING HERE: pt-8 = 32px, pl-8 = 32px */}
+      // Apply padding to the parent of the CoreWrapper
+      <div style={{ paddingTop: '96px', paddingLeft: '384px' }}>
         <CoreWrapper>
           <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
             <LegacyTeamRow team={team1} position="top" />
@@ -148,6 +147,21 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
         </CoreWrapper>
       </div>
     );
+  }
+  
+  // --- LAYOUT: SIDE BY SIDE (FIXED RESOLUTION) ---
+  if (layout === "sideBySide") {
+    return (
+      <CoreWrapper>
+        <div className="h-full w-full bg-transparent p-4" data-testid="scoreboard-display">
+          <div className="flex gap-4 h-full">
+            <TeamSection team={team1} position="left" />
+            <TeamSection team={team2} position="right" />
+          </div>
+        </div>
+      </CoreWrapper>
+    );
+  }
 
   // --- LAYOUT: SCOREBOARD (FIXED RESOLUTION) ---
   return (
