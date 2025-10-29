@@ -337,29 +337,20 @@
   }
 }
 
-/* --- RESOLUTION BOOSTER & LEGACY STYLES --- */
+/* --- RESOLUTION FIX CONTAINER & LEGACY STYLES --- */
 @layer components {
   
-  /* 1. Wrapper that forces a scale to fit the viewport */
-  .scaling-wrapper {
-    /* Scale the content down to fit the actual viewport. */
-    /* This uses a reliable hardcoded scale factor (1/4 or 25%) */
+  /* The wrapper that forces the browser to render the content at a huge fixed resolution */
+  .fixed-resolution-wrapper {
+    /* Scale the content down to fit the actual viewport */
     transform-origin: top left;
-    transform: scale(calc(1 / var(--resolution-factor))); 
+    transform: scale(calc(100vw / 1920), calc(100vh / 1080)); 
     
-    /* Ensure no scrollbars show up in the parent viewport */
+    /* Ensure no scrollbars show up */
     @apply fixed top-0 left-0 overflow-hidden;
   }
 
-  /* 2. Content that is RENDERED larger (The ScoreboardDisplay content) */
-  .resolution-booster {
-    /* Multiplies all Tailwind units (p-6, text-4xl, h-12, etc.) by the factor. */
-    /* We must reverse the multiplier on children that use absolute pixel sizes (e.g., icons) */
-    width: calc(100vw * var(--resolution-factor));
-    height: calc(100vh * var(--resolution-factor));
-  }
-  
-  /* 3. Legacy Stacked Styles (Unchanged from previous fix) */
+  /* 2. Legacy Stacked Styles (Unchanged from previous fix) */
   .legacy-team-row {
     height: 35px;
     font-size: 26px;
