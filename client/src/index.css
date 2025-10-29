@@ -131,6 +131,7 @@
   --opaque-button-border-intensity: 9;
 
   --elevate-1: rgba(255,255,255, .04);
+
   --elevate-2: rgba(255,255,255, .09);
 
   --background: 210 6% 8%;
@@ -337,10 +338,23 @@
   }
 }
 
-/* --- LEGACY SCOREBOARD STYLES (TAILWIND IMPLEMENTATION OF s41.css) --- */
+/* --- RESOLUTION FIX CONTAINER & LEGACY STYLES --- */
 @layer components {
   
-  /* REMOVE SCALING CSS (fixed-resolution-wrapper) */
+  /* The wrapper that forces the browser to render the content at a huge fixed resolution */
+  .forced-resolution-wrapper {
+    /* Scale the content down to fit the actual viewport */
+    transform-origin: top left;
+    transform: scale(calc(100vw / 1920), calc(100vh / 1080)); 
+    
+    /* Set an absolute size on the element so its children render HUGE (1920x1080) */
+    width: 1920px; /* This is the FIXED size the content is rendered at */
+    height: 1080px; /* This is the FIXED size the content is rendered at */
+
+    /* The key is that we DO NOT use fixed/absolute positioning here, 
+       allowing the parent padding to push it down/right correctly */
+    @apply overflow-hidden;
+  }
 
   /* 2. Legacy Stacked Styles (Unchanged from previous fix) */
   .legacy-team-row {
