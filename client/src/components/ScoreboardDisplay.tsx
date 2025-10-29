@@ -141,7 +141,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     );
 
     return (
-      <div className="pt-12 pl-60"> {/* Apply large padding BEFORE scaling */}
+      <div className="pt-0 pl-0"> {/* Apply large padding BEFORE scaling */}
         <CoreWrapper>
           <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
             <LegacyTeamRow team={team1} position="top" />
