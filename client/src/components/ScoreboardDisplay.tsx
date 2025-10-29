@@ -5,8 +5,14 @@ interface ScoreboardDisplayProps {
   config: MatchConfig;
 }
 
+// Global Resolution Scaling Factor (Increase this number to increase internal resolution)
+const RESOLUTION_FACTOR = 4; 
+
 export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   const { layout, fontFamily, fontSize, team1, team2 } = config;
+
+  // Calculate the scaled font size
+  const scaledFontSize = fontSize * RESOLUTION_FACTOR;
 
   // --- REUSABLE TEAM SECTION (Used for sideBySide logic) ---
   const TeamSection = ({
@@ -17,12 +23,13 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     position: "left" | "right" | "top" | "bottom";
   }) => (
     <div
-      className="flex-1 p-6 rounded-lg flex flex-col justify-center items-center relative"
+      // Set the font directly here
       style={{
         backgroundColor: team.bgColor,
         color: team.textColor,
         fontFamily: fontFamily,
       }}
+      className="resolution-booster flex-1 p-6 rounded-lg flex flex-col justify-center items-center relative"
       data-testid={`team-${position}-section`}
     >
       <div className="flex items-center gap-3 text-2xl font-bold mb-4">
@@ -41,7 +48,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
           <div className="text-xs uppercase tracking-wide opacity-75 mb-1">Set</div>
           <div
             className="font-black"
-            style={{ fontSize: `${fontSize}px` }}
+            style={{ fontSize: `${scaledFontSize}px` }} // Use the scaled font size
             data-testid={`set-score-${position}`}
           >
             {team.setScore}
@@ -51,7 +58,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
           <div className="text-xs uppercase tracking-wide opacity-75 mb-1">Match</div>
           <div
             className="font-black"
-            style={{ fontSize: `${fontSize * 0.75}px` }}
+            style={{ fontSize: `${scaledFontSize * 0.75}px` }} // Use the scaled font size
             data-testid={`match-score-${position}`}
           >
             {team.matchScore}
@@ -63,8 +70,9 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   
   // --- LAYOUT: SIDE BY SIDE (Original Logic) ---
   if (layout === "sideBySide") {
+    // Wrap with the new outer scaling container
     return (
-      <div className="scaling-container" data-testid="scoreboard-display-wrapper">
+      <div className="scaling-wrapper h-screen w-screen" data-testid="scoreboard-display-wrapper">
         <div className="h-full w-full bg-transparent p-4" data-testid="scoreboard-display">
           <div className="flex gap-4 h-full">
             <TeamSection team={team1} position="left" />
@@ -79,6 +87,8 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   if (layout === "stacked") {
     const { team1, team2 } = config;
     
+    // Legacy styling relies on fixed pixel sizes, so scaling this is complex.
+    // For this layout, we must rely on the existing fixed pixel sizes, as scaling the font will break the fixed layout.
     document.documentElement.style.setProperty('--legacy-team1-bg-color', team1.bgColor);
     document.documentElement.style.setProperty('--legacy-team1-text-color', team1.textColor);
     document.documentElement.style.setProperty('--legacy-team2-bg-color', team2.bgColor);
@@ -123,7 +133,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     );
 
     return (
-      <div data-testid="scoreboard-display-wrapper">
+      <div className="scaling-wrapper h-screen w-screen" data-testid="scoreboard-display-wrapper">
         <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
           <LegacyTeamRow team={team1} position="top" />
           <LegacyTeamRow team={team2} position="bottom" />
@@ -134,17 +144,17 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
 
   // --- LAYOUT: SCOREBOARD (Original Logic) ---
   return (
-    <div className="scaling-container" data-testid="scoreboard-display-wrapper">
+    <div className="scaling-wrapper h-screen w-screen" data-testid="scoreboard-display-wrapper">
       <div className="h-full w-full bg-black flex" data-testid="scoreboard-display">
         <div
-          className="flex-1 flex flex-col items-center justify-center relative"
+          className="resolution-booster flex-1 flex flex-col items-center justify-center relative"
           style={{ backgroundColor: team1.bgColor, color: team1.textColor }}
         >
           {team1.serving && (
             <img
               src={volleyballIcon}
               alt="Serving"
-              className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
+              className="h-12 w-12 rounded-full object-cover absolute top-8 right-8"
               data-testid="serving-indicator-left"
             />
           )}
@@ -153,7 +163,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
           </div>
           <div
             className="font-black"
-            style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
+            style={{ fontSize: `${scaledFontSize * 2}px`, fontFamily }}
             data-testid="set-score-left"
           >
             {team1.setScore}
@@ -163,14 +173,14 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
           </div>
         </div>
         <div
-          className="flex-1 flex flex-col items-center justify-center relative"
+          className="resolution-booster flex-1 flex flex-col items-center justify-center relative"
           style={{ backgroundColor: team2.bgColor, color: team2.textColor }}
         >
           {team2.serving && (
             <img
               src={volleyballIcon}
               alt="Serving"
-              className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
+              className="h-12 w-12 rounded-full object-cover absolute top-8 right-8"
               data-testid="serving-indicator-right"
             />
           )}
@@ -179,7 +189,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
           </div>
           <div
             className="font-black"
-            style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
+            style={{ fontSize: `${scaledFontSize * 2}px`, fontFamily }}
             data-testid="set-score-right"
           >
             {team2.setScore}
