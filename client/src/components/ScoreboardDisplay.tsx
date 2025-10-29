@@ -139,7 +139,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     );
 
     return (
-      <div className="pt-24 pl-300"> {/* ADD PADDING HERE: pt-8 = 32px, pl-8 = 32px */}
+      <div className="pt-24 pl-96"> {/* ADD PADDING HERE: pt-8 = 32px, pl-8 = 32px */}
         <CoreWrapper>
           <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
             <LegacyTeamRow team={team1} position="top" />
