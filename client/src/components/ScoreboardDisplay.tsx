@@ -141,7 +141,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     return (
       <CoreWrapper>
         {/* The legacy stack layout must be positioned within the 4K container */}
-        <div className="absolute top-0 left-0 p-12" style={{ transform: 'scale(3.5)'}}> {/* Manual factor to make it visible */}
+        <div className="absolute top-0 left-0 p-32" style={{ transform: 'scale(3.5)'}}> {/* Manual factor to make it visible */}
           <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
             <LegacyTeamRow team={team1} position="top" />
             <LegacyTeamRow team={team2} position="bottom" />
