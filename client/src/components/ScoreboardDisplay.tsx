@@ -139,25 +139,15 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     );
 
     return (
-      <CoreWrapper>
-        {/* The legacy stack layout must be positioned within the 4K container */}
-        <div 
-            className="absolute top-0 left-0" 
-            style={{ 
-                transform: 'scale(3.5)',
-                // Apply a specific top/left offset to push the content
-                paddingTop: '64px', // Adjust this value (e.g., 64px, 100px, etc.)
-                paddingLeft: '100px', // Adjust this value
-            }}
-        > {/* Manual factor to make it visible */}
+      <div className="pt-24 pl-300"> {/* ADD PADDING HERE: pt-8 = 32px, pl-8 = 32px */}
+        <CoreWrapper>
           <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
             <LegacyTeamRow team={team1} position="top" />
             <LegacyTeamRow team={team2} position="bottom" />
           </div>
-        </div>
-      </CoreWrapper>
+        </CoreWrapper>
+      </div>
     );
-  }
 
   // --- LAYOUT: SCOREBOARD (FIXED RESOLUTION) ---
   return (
