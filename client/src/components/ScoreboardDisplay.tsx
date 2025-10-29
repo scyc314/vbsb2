@@ -64,35 +64,33 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   // --- LAYOUT: SIDE BY SIDE (Original Logic) ---
   if (layout === "sideBySide") {
     return (
-      <div className="h-screen w-screen bg-transparent p-4" data-testid="scoreboard-display">
-        <div className="flex gap-4 h-full">
-          <TeamSection team={team1} position="left" />
-          <TeamSection team={team2} position="right" />
+      <div className="scaling-container" data-testid="scoreboard-display-wrapper">
+        <div className="h-full w-full bg-transparent p-4" data-testid="scoreboard-display">
+          <div className="flex gap-4 h-full">
+            <TeamSection team={team1} position="left" />
+            <TeamSection team={team2} position="right" />
+          </div>
         </div>
       </div>
     );
   }
 
-  // --- LAYOUT: LEGACY STACKED (NEW Implementation) ---
+  // --- LAYOUT: LEGACY STACKED (Existing Logic) ---
   if (layout === "stacked") {
     const { team1, team2 } = config;
     
-    // Set colors as CSS variables for use in custom CSS rules
     document.documentElement.style.setProperty('--legacy-team1-bg-color', team1.bgColor);
     document.documentElement.style.setProperty('--legacy-team1-text-color', team1.textColor);
     document.documentElement.style.setProperty('--legacy-team2-bg-color', team2.bgColor);
     document.documentElement.style.setProperty('--legacy-team2-text-color', team2.textColor);
     document.documentElement.style.setProperty('--legacy-font-family', fontFamily);
     
-    // Custom Team Row Component for the Legacy Stacked Look
     const LegacyTeamRow = ({ team, position }: { team: typeof team1, position: 'top' | 'bottom' }) => (
       <div 
         className={`legacy-team-row legacy-team-${position} ${team.serving ? 'serving' : ''}`}
         data-testid={`team-${position}-section`}
-        // Apply dynamic colors via style to use them in Tailwind classes
         style={{ color: team.textColor, fontFamily }}
       >
-          {/* 1. Sets Won (Match Score) - Fixed Width, Gray Bg */}
           <span 
             className="legacy-field-setswon flex-shrink-0 text-[18px] text-center bg-gray-700/80 leading-[35px] align-middle"
             data-testid={`match-score-${position}`}
@@ -100,7 +98,6 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
             {team.matchScore}
           </span>
           
-          {/* 2. Team Name - Fixed Width, Padded */}
           <span 
             className="legacy-field-name flex-shrink-0 pl-[5px]"
             data-testid={`team-name-${position}`}
@@ -108,7 +105,6 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
             {team.name}
           </span>
           
-          {/* 3. Serving Icon - Fixed Width, Centered */}
           <span className="legacy-field-serving flex-shrink-0 flex justify-center items-center">
             {team.serving ? 
               <img src={volleyballIcon} alt="Serving" className="h-full w-auto max-h-full max-w-full" /> 
@@ -117,7 +113,6 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
             }
           </span>
           
-          {/* 4. Set Score (Main Score) - Fixed Width, Centered */}
           <span 
             className="legacy-field-setscore flex-shrink-0 text-center"
             data-testid={`set-score-${position}`}
@@ -128,7 +123,7 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
     );
 
     return (
-      <div data-testid="scoreboard-display">
+      <div data-testid="scoreboard-display-wrapper">
         <div className="legacy-stack-layout mt-[15px] ml-[15px] text-[0] w-fit">
           <LegacyTeamRow team={team1} position="top" />
           <LegacyTeamRow team={team2} position="bottom" />
@@ -138,59 +133,60 @@ export default function ScoreboardDisplay({ config }: ScoreboardDisplayProps) {
   }
 
   // --- LAYOUT: SCOREBOARD (Original Logic) ---
-  // Scoreboard layout - large numbers on colored backgrounds
   return (
-    <div className="h-screen w-screen bg-black flex" data-testid="scoreboard-display">
-      <div
-        className="flex-1 flex flex-col items-center justify-center relative"
-        style={{ backgroundColor: team1.bgColor, color: team1.textColor }}
-      >
-        {team1.serving && (
-          <img
-            src={volleyballIcon}
-            alt="Serving"
-            className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
-            data-testid="serving-indicator-left"
-          />
-        )}
-        <div className="text-4xl font-bold mb-4" data-testid="team-name-left">
-          {team1.name}
+    <div className="scaling-container" data-testid="scoreboard-display-wrapper">
+      <div className="h-full w-full bg-black flex" data-testid="scoreboard-display">
+        <div
+          className="flex-1 flex flex-col items-center justify-center relative"
+          style={{ backgroundColor: team1.bgColor, color: team1.textColor }}
+        >
+          {team1.serving && (
+            <img
+              src={volleyballIcon}
+              alt="Serving"
+              className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
+              data-testid="serving-indicator-left"
+            />
+          )}
+          <div className="text-4xl font-bold mb-4" data-testid="team-name-left">
+            {team1.name}
+          </div>
+          <div
+            className="font-black"
+            style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
+            data-testid="set-score-left"
+          >
+            {team1.setScore}
+          </div>
+          <div className="text-2xl mt-4 opacity-75">
+            Sets: <span data-testid="match-score-left">{team1.matchScore}</span>
+          </div>
         </div>
         <div
-          className="font-black"
-          style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
-          data-testid="set-score-left"
+          className="flex-1 flex flex-col items-center justify-center relative"
+          style={{ backgroundColor: team2.bgColor, color: team2.textColor }}
         >
-          {team1.setScore}
-        </div>
-        <div className="text-2xl mt-4 opacity-75">
-          Sets: <span data-testid="match-score-left">{team1.matchScore}</span>
-        </div>
-      </div>
-      <div
-        className="flex-1 flex flex-col items-center justify-center relative"
-        style={{ backgroundColor: team2.bgColor, color: team2.textColor }}
-      >
-        {team2.serving && (
-          <img
-            src={volleyballIcon}
-            alt="Serving"
-            className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
-            data-testid="serving-indicator-right"
-          />
-        )}
-        <div className="text-4xl font-bold mb-4" data-testid="team-name-right">
-          {team2.name}
-        </div>
-        <div
-          className="font-black"
-          style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
-          data-testid="set-score-right"
-        >
-          {team2.setScore}
-        </div>
-        <div className="text-2xl mt-4 opacity-75">
-          Sets: <span data-testid="match-score-right">{team2.matchScore}</span>
+          {team2.serving && (
+            <img
+              src={volleyballIcon}
+              alt="Serving"
+              className="absolute top-8 right-8 h-12 w-12 rounded-full object-cover"
+              data-testid="serving-indicator-right"
+            />
+          )}
+          <div className="text-4xl font-bold mb-4" data-testid="team-name-right">
+            {team2.name}
+          </div>
+          <div
+            className="font-black"
+            style={{ fontSize: `${fontSize * 2}px`, fontFamily }}
+            data-testid="set-score-right"
+          >
+            {team2.setScore}
+          </div>
+          <div className="text-2xl mt-4 opacity-75">
+            Sets: <span data-testid="match-score-right">{team2.matchScore}</span>
+          </div>
         </div>
       </div>
     </div>
