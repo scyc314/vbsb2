@@ -122,6 +122,10 @@
   --legacy-team1-text-color: #FFFFFF;
   --legacy-team2-bg-color: transparent;
   --legacy-team2-text-color: #FFFFFF;
+  
+  /* --- SCALING BASE RESOLUTION (e.g., 4K) --- */
+  --scale-width: 3840;
+  --scale-height: 2160;
 }
 
 .dark {
@@ -347,17 +351,20 @@
      making the text/graphics much sharper when viewed by a camera/external source */
   .scaling-container {
     /* Use a high-resolution base for scaling, e.g., 4K/UHD (3840x2160) */
-    width: 3840px; 
-    height: 2160px;
+    width: var(--scale-width)px; 
+    height: var(--scale-height)px;
     
-    /* Scale the content down to fit the actual viewport */
+    /* Scale the content down using CSS Custom Properties and calc() - CORRECTED */
     transform-origin: top left;
-    transform: scale(calc(100vw / 3840), calc(100vh / 2160));
+    transform: scale(
+      calc(100vw / var(--scale-width)), 
+      calc(100vh / var(--scale-height))
+    );
     
     /* Ensure no scrollbars show up */
     overflow: hidden; 
     
-    /* Position fixed to cover the whole viewport (optional, but clean) */
+    /* Position fixed to cover the whole viewport */
     position: fixed; 
     top: 0; 
     left: 0;
@@ -410,4 +417,4 @@
   .legacy-field-setscore {
     width: 40px;
   }
-}```
+}
